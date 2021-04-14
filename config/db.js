@@ -1,4 +1,6 @@
 const mongoose = require("mongoose");
+const colors = require('colors');
+
 
 const connectDB = () => {
   mongoose.connect(
@@ -10,7 +12,7 @@ const connectDB = () => {
   }
 )
 .then((conn) => {
-  console.log(`Mongodb connected to: ${conn.connection.host}`);
+  console.log(`Mongodb connected to: ${conn.connection.host}`.white.inverse);
 })
 .catch((err) => {
   console.log(err);
