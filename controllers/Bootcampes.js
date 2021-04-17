@@ -4,6 +4,9 @@ const geocoder = require("../utils/geocoder");
 const ErrorResponse = require("../utils/ErrorResponse");
 const path = require("path");
 
+
+
+
 // @desc get All bootcamps
 // @routes   GET /api/v1/bootcamps
 // @Access PUBLIC

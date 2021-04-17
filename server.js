@@ -5,12 +5,16 @@ const morgan = require("morgan");
 const colors = require("colors");
 const fileUpload = require('express-fileupload');
 const PORT = process.env.PORT || 5000;
+const cookieParser = require('cookie-parser');
 const errorHandler = require('./middleware/error');
 const connectDB = require("./config/db");
 const path = require('path');
 
 // Body parser
 app.use(express.json());
+
+// cookie parser
+app.use(cookieParser());
 
 // Dev logging middleware
 app.use(morgan("dev"));
@@ -20,6 +24,7 @@ app.use(morgan("dev"));
 // routes file
 const bootcamps = require("./routes/Bootcamps");
 const courses = require("./routes/Courses");
+const auth = require("./routes/auth");
 
 // file upload
 app.use(fileUpload());
@@ -28,6 +33,7 @@ app.use(fileUpload());
 // Mount routes
 app.use("/api/v1/bootcamps", bootcamps);
 app.use("/api/v1/courses", courses);
+app.use("/api/v1/auth", auth);
 
 // coutom error handler
 app.use(errorHandler)
@@ -41,6 +47,8 @@ connectDB();
 // set static file
 app.use(express.static(path.join(__dirname , 'public')));
 
+
+
 // server Establising
 const server = app.listen(PORT, () =>
 	console.log(
@@ -48,8 +56,6 @@ const server = app.listen(PORT, () =>
 		.blue.bold
 	)
 );
-
-
 
 
 

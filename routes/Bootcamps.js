@@ -21,6 +21,11 @@ router.use('/:bootcampId/courses' , courseRouter);
 const advanceResult = require('../middleware/advanceResult');
 const Bootcamp = require("../modals/bootcamps");
 
+// Router protect middleware
+const {protect} = require('../middleware/auth');
+const {roleAuthorization} = require('../middleware/authorize');
+
+
  router
 .route('/radius/:zipcode/:distance')
 .get(getBootcampInRadius)
@@ -28,13 +33,13 @@ const Bootcamp = require("../modals/bootcamps");
 
 
 router.route('/')
-      .get(advanceResult(Bootcamp , 'courses') ,getBootcamps)
-      .post(createBootcamps)
+      .get(protect , advanceResult(Bootcamp , 'courses') ,getBootcamps)
+      .post(protect, roleAuthorization('publisher' , 'admin') , createBootcamps)
 
 router.route('/:id')
-     .get(getBootcamp)
-     .put(updateBootcamp)
-     .delete(deleteBootcamp)
+     .get(protect, getBootcamp)
+     .put(protect ,roleAuthorization('publisher' , 'admin'), updateBootcamp)
+     .delete(protect,roleAuthorization('publisher' , 'admin'),deleteBootcamp)
 
 router.route('/:id/photo')
        .put(uploadPhoto)
