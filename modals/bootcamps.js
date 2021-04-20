@@ -71,7 +71,7 @@ const bootcampSchema = new mongoose.Schema({
        'Ohter'
      ]
    },
-   avarageRating : {
+   averageRating : {
      type : Number,
      min : [1 , 'Rating must at least 1'],
      max : [10 , 'Rating must not be more than 10']
@@ -96,6 +96,11 @@ const bootcampSchema = new mongoose.Schema({
    acceptGi : {
      type : Boolean,
      default : false
+   },
+   user : {
+     type : mongoose.Schema.Types.ObjectId,
+     ref : 'User',
+     required : true
    },
    createdAt : {
      type : Date,

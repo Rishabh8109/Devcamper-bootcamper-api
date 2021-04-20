@@ -40,7 +40,12 @@ const CourseSchema = new mongoose.Schema({
     type : mongoose.Schema.Types.ObjectId,
     ref : 'Bootcamps',
     required : true
-  }
+  },
+   user :{
+    type : mongoose.Schema.Types.ObjectId,
+    ref : 'User',
+    required : true
+  },
 });
 
 // Static method to get ava cost of tuition
@@ -77,7 +82,7 @@ CourseSchema.post('save' , function(){
 // / Ge avarage cost before deleing the course
 CourseSchema.pre('remove' , function(){
   this.constructor.getAvarageCost(this.bootcamp);
-})
+});
 
 const Course = mongoose.model('Course' , CourseSchema);
 

@@ -13,9 +13,11 @@ const router = express.Router();
 
 // Include courses router
 const courseRouter = require('./Courses');
+const reviewRouter = require('./reviews');
 
 //Re-Route into other resourse route
 router.use('/:bootcampId/courses' , courseRouter);
+router.use('/:bootcampId/reviews' , reviewRouter);
 
 // advence result middleware
 const advanceResult = require('../middleware/advanceResult');

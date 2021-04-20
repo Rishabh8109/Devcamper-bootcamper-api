@@ -71,7 +71,19 @@ exports.getBootcampInRadius = async (req, res, next) => {
 // @desc create bootcamps
 // @routes   POST /api/v1/bootcamps
 // @Access Private
-exports.createBootcamps = (req, res, next) => {
+exports.createBootcamps = async (req, res, next) => {
+
+	// Add user to req.body
+	req.body.user = req.user.id;
+
+	// Check for published bootcamp
+	const publishedBootcamp = await Bootcamps.findOne({user : req.user.id});
+
+	// Check if user is not admin
+	if(publishedBootcamp && req.user.role !== 'admin'){
+   return next(new ErrorResponse(`The user with ID ${req.user.id} has already published`))
+	}
+
 	const bootcamps = new Bootcamps(req.body);
 	bootcamps
 		.save()
@@ -89,20 +101,35 @@ exports.createBootcamps = (req, res, next) => {
 // @desc update bootcamp
 // @routes   PUT /api/v1/bootcamps/:id
 // @Access Private
-exports.updateBootcamp = (req, res, next) => {
-	Bootcamps.findByIdAndUpdate(req.params.id, req.body, {
-		new: true,
-		runValidators: true,
-	})
-		.then((bootcamp) => {
-			res.status(200).json({
-				success: true,
-				data: bootcamp,
-			});
-		})
-		.catch((err) => {
-			next(err);
-		});
+exports.updateBootcamp = async (req, res, next) => {
+
+	// find bootcamp
+  let bootcamp = await	Bootcamps.findById(req.params.id);
+
+	// if bootcamp not found
+	if(!bootcamp){
+		return next(
+			new ErrorResponse(`Bootcamp not found with this ${req.params.id} ID` , 404)
+		)
+	}
+
+	// Make sure user is bootcamp owner
+	if(bootcamp.user.toString() !== req.user.id && req.user.role !== "admin"){
+		return next(new ErrorResponse(`User ${req.user._id} Id is not authorized for update this bootcamps` ,  401));
+	}
+
+	// update bootcamp
+  bootcamp = await Bootcamps.findOneAndUpdate(req.params.id , req.body , {
+		new : true,
+		runValidators : true
+	});
+
+	// Send JSON Body respose
+	res.status(200).json({
+		success: true,
+		data: bootcamp,
+	});
+
 };
 
 // @desc delete bootcamps

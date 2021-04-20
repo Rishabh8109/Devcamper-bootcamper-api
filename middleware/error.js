@@ -4,9 +4,10 @@ const errorHandler = (err ,req,res,next) => {
   let error = {...err};
   error.message = err.message;
 
+
   // Mongodb Bad ObjecId
-  if(err.name === 'CastError' && err.name === 'TypeError'){
-    const message = `Bootcamp not found with ID of ${err.value}`;
+  if(err.name === 'CastError'){
+    const message = `Resourse not found with ID of ${err.value}`;
     error = new ErrorRespose(message , 400)
   }
 

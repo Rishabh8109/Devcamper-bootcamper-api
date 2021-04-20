@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
 
 const UserSchema = new mongoose.Schema({
 	name: {
@@ -37,6 +38,9 @@ const UserSchema = new mongoose.Schema({
 
 // @Encrtype password using hash
 UserSchema.pre('save' , async function(next){
+	if(!this.isModified('password')){
+		next();
+	}
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password , salt);
   next();
@@ -47,6 +51,21 @@ UserSchema.methods.getSignedJwtToken =  function(){
    return jwt.sign({ _id: this._id }, process.env.JWT_SECRET, {
      expiresIn: process.env.JWT_EXPIRES
    });
+}
+
+// Generate & Hash token genrate
+UserSchema.methods.getForgotPasswordToken = async function(){
+
+	// @Generate Token
+	const resetToken = crypto.randomBytes(20).toString('hex');
+
+	// @Hash token and set it to resetPasswordToken
+	this.resetpasswordToken = crypto.createHash('sha256').update(resetToken).digest('hex');
+
+	// Token expiration
+	this.resetpasswordExp = new Date() + 10 * 60 * 1000;
+
+	return resetToken;
 }
 
 // Math user provided password to databse
