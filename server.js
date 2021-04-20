@@ -69,7 +69,7 @@ app.use("/api/v1/reviews", reviews);
 app.use(errorHandler)
 
 // load env vars
-Dotenv.config();
+Dotenv.config({path : 'config/.env'});
 
 // Establising Databse conecttion
 connectDB();
